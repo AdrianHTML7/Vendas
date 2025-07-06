@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa de Supermercado - Vendas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variáveis CSS para facilitar a manutenção da paleta de cores e tamanhos */
+        :root {
+            --primary-color: #007BFF; /* Azul principal */
+            --secondary-color: #6c757d; /* Cinza secundário */
+            --success-color: #28a745; /* Verde para sucesso */
+            --danger-color: #dc3545; /* Vermelho para perigo */
+            --warning-color: #ffc107; /* Amarelo para aviso */
+            --info-color: #17a2b8; /* Azul claro para informação */
+            --light-bg: #f8f9fa; /* Fundo claro */
+            --dark-text: #343a40; /* Texto escuro */
+            --border-color: #dee2e6; /* Cor da borda */
+            --border-radius: 8px; /* Raio da borda para elementos arredondados */
+            --box-shadow: rgba(0, 0, 0, 0.1); /* Sombra padrão */
+        }
+
+        body {
+            font-family: 'Roboto', Arial, sans-serif; /* Fonte principal */
+            max-width: 960px; /* Largura máxima para centralizar o conteúdo */
+            margin: 20px auto; /* Margem superior/inferior e centralização horizontal */
+            padding: 20px;
+            position: relative;
+            min-height: 100vh;
+            color: var(--dark-text);
+            background-color: #f0f2f5; /* Fundo mais suave para o corpo */
+            line-height: 1.6; /* Espaçamento entre linhas para melhor leitura */
+            box-shadow: 0 0 20px var(--box-shadow); /* Sombra geral do corpo */
+            border-radius: 12px; /* Cantos arredondados para o corpo */
+            overflow-x: hidden; /* Evita barras de rolagem horizontais indesejadas */
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('fundo.png') no-repeat center top;
+            background-size: cover;
+            opacity: 0.08; /* Opacidade reduzida para o fundo de imagem */
+            z-index: -1;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 2.8em; /* Aumenta o tamanho do título principal */
+            border-bottom: 4px solid var(--primary-color);
+            padding-bottom: 12px;
+            display: inline-block; /* Para que a borda de baixo se ajuste ao texto */
+            margin-left: auto;
+            margin-right: auto;
+            letter-spacing: 1px; /* Espaçamento entre letras para o título */
+        }
+
+        h2 {
+            font-size: 2em; /* Aumenta o tamanho dos subtítulos */
+            margin-top: 35px;
+            margin-bottom: 25px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            color: #333; /* Cor mais escura para os subtítulos */
+        }
+
+        section {
+            background-color: #ffffff;
+            padding: 30px; /* Aumenta o padding das seções */
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra mais suave e pronunciada */
+            transition: transform 0.3s ease; /* Transição para efeito de hover */
+        }
+
+        section:hover {
+            transform: translateY(-3px); /* Leve efeito de "levantar" ao passar o mouse */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: calc(100% - 24px); /* Largura total menos padding */
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1em;
+            box-sizing: border-box; /* Garante que padding e borda não aumentem a largura total */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Sombra ao focar */
+            outline: none; /* Remove o outline padrão */
+        }
+
+        button {
+            padding: 12px 25px; /* Aumenta o padding dos botões */
+            margin: 10px 8px 10px 0;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.05em; /* Levemente maior */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra nos botões */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button.btn-small {
+            padding: 6px 12px;
+            font-size: 0.85em;
+            margin: 2px;
+            box-shadow: none; /* Sem sombra para botões pequenos */
+        }
+
+        button.btn-small:hover {
+            transform: translateY(0); /* Remove efeito de "levantar" em botões pequenos */
+            box-shadow: none;
+        }
+
+        /* Cores específicas para botões de ação */
+        button.btn-danger {
+            background-color: var(--danger-color);
+        }
+        button.btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        button.btn-warning {
+            background-color: var(--warning-color);
+            color: var(--dark-text); /* Texto escuro para botões amarelos */
+        }
+        button.btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        button.btn-success {
+            background-color: var(--success-color);
+        }
+        button.btn-success:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px; /* Mais margem para tabelas */
+            background-color: #ffffff;
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Garante que as bordas arredondadas se apliquem ao conteúdo da tabela */
+            box-shadow: 0 2px 10px var(--box-shadow); /* Sombra para a tabela */
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 14px 10px; /* Mais padding para células da tabela */
+            text-align: left; /* Alinhamento do texto à esquerda para melhor leitura */
+            font-size: 0.95em;
+        }
+
+        th {
+            background: var(--light-bg);
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase; /* Cabeçalho em maiúsculas */
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f6f6f6; /* Listras zebradas para melhor distinção de linhas */
+        }
+
+        tr:hover {
+            background-color: #eef2f5; /* Efeito de hover nas linhas da tabela */
+        }
+
+        #recibo {
+            margin-top: 30px;
+            border: 2px dashed var(--primary-color); /* Borda tracejada para o recibo */
+            padding: 25px;
+            background: var(--light-bg);
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace; /* Fonte monoespaçada para recibos */
+            font-size: 0.95em;
+            border-radius: var(--border-radius);
+            overflow-x: auto; /* Permite scroll horizontal se o texto for muito longo */
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.07); /* Sombra interna para o recibo */
+            color: #222;
+        }
+
+        #btnGerarPDF, #btnImprimirCupom {
+            margin-top: 20px;
+            display: none;
+            width: auto; /* Deixa os botões com largura natural */
+        }
+
+        /* Estilo do Modal */
+        #editModal {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Fundo mais escuro */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Garante que o modal esteja acima de outros elementos */
+            opacity: 0; /* Começa invisível para transição de opacidade */
+            transition: opacity 0.3s ease-out;
+        }
+
+        #editModal.active {
+            opacity: 1; /* Torna visível */
+        }
+
+        #editModalContent {
+            background: white;
+            padding: 35px; /* Mais padding no modal */
+            border-radius: 12px; /* Cantos mais arredondados */
+            max-width: 400px; /* Largura máxima do conteúdo do modal */
+            width: 90%; /* Largura responsiva */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Sombra mais pronunciada e suave para o modal */
+            transform: scale(0.8); /* Começa menor para efeito de entrada */
+            transition: transform 0.3s ease-out;
+        }
+
+        #editModal.active #editModalContent {
+            transform: scale(1); /* Escala de volta para o tamanho normal na ativação */
+        }
+
+        #editModalContent h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.6em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        #editModalContent label {
+            display: block;
+            margin-bottom: 8px; /* Mais espaço abaixo do label */
+            font-weight: 700;
+            color: var(--dark-text);
+            font-size: 0.95em;
+        }
+
+        #editModalContent input, #editModalContent select {
+            width: calc(100% - 24px); /* Ajuste de largura para inputs no modal */
+            margin-bottom: 20px; /* Mais espaço entre os campos */
+        }
+
+        #editModalContent button {
+            width: calc(50% - 10px); /* Botões do modal em duas colunas com espaço */
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 0.95em;
+        }
+
+        #editModalContent button:last-child {
+            margin-right: 0;
+            background-color: var(--secondary-color); /* Cor diferente para o botão "Cancelar" */
+        }
+        #editModalContent button:last-child:hover {
+            background-color: #5a6268;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+                margin: 10px auto;
+                border-radius: 0; /* Remove borda arredondada em telas muito pequenas para usar todo o espaço */
+                box-shadow: none;
+            }
+
+            h1 {
+                font-size: 2.2em;
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                font-size: 1.7em;
+                margin-top: 25px;
+                margin-bottom: 18px;
+            }
+
+            section {
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 8px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select,
+            button {
+                width: 100%; /* Botões e inputs ocupam largura total em telas pequenas */
+                margin-right: 0;
+            }
+
+            button {
+                margin-bottom: 10px;
+            }
+
+            button.btn-small {
+                width: auto; /* Botões pequenos mantêm largura auto */
+                margin: 5px;
+            }
+
+            #editModalContent {
+                padding: 25px;
+                width: 95%;
+            }
+
+            #editModalContent button {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+        }
+
+        /* Efeito de carregamento/sucesso */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            pointer-events: none; /* Permite cliques através quando invisível */
+        }
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .success-message {
+            color: var(--success-color);
+            font-size: 1.5em;
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 0.5s forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Vendas.html – Caixa de Supermercado</h1>
+
+<section>
+    <h2>Cadastro de Produtos</h2>
+    <input type="text" id="produtoNome" placeholder="Nome do produto" />
+    <input type="number" id="valorCompra" placeholder="Valor de compra (R$)" min="0" step="0.01" />
+    <input type="number" id="valorVenda" placeholder="Valor de venda (R$)" min="0" step="0.01" />
+    <button onclick="cadastrarProduto()">Cadastrar Produto</button>
+    <table id="produtosTabela">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Compra (R$)</th>
+                <th>Venda (R$)</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Registrar Venda</h2>
+    <select id="selectProduto"></select>
+    <input type="number" id="quantidadeVenda" min="1" value="1" />
+    <select id="formaPagamento">
+        <option value="">-- Forma de pagamento --</option>
+        <option value="Pix">Pix</option>
+        <option value="Débito">Débito</option>
+        <option value="Crédito">Crédito</option>
+        <option value="Dinheiro">Dinheiro</option>
+    </select>
+    <button onclick="registrarVenda()">Registrar Venda</button>
+    <table id="vendasTabela">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Qtd</th>
+                <th>Preço Unit.</th>
+                <th>Total</th>
+                <th>Pgto</th>
+                <th>Data/Hora</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<section>
+    <h2>Fechamento / Recibo</h2>
+    <button onclick="fecharCaixa()">Fechar Caixa e Gerar Recibo</button>
+    <button onclick="resetarVendasDoDia()" class="btn-warning">Limpar Vendas do Dia</button>
+    <button onclick="restaurarVendas()" class="btn-success">Restaurar Últimas Vendas</button>
+    <pre id="recibo" style="display:none;"></pre>
+    <button id="btnGerarPDF" onclick="gerarPDF()">Gerar PDF do Recibo</button>
+    <button id="btnImprimirCupom" onclick="imprimirCupomFiscal()">Imprimir Cupom Fiscal</button>
+</section>
+
+<div id="editModal">
+    <div id="editModalContent">
+        <h3>Editar Venda</h3>
+        <label for="editQuantidade">Quantidade:</label>
+        <input type="number" id="editQuantidade" min="1" />
+        <label for="editFormaPagamento">Forma de Pagamento:</label>
+        <select id="editFormaPagamento">
+            <option value="Pix">Pix</option>
+            <option value="Débito">Débito</option>
+            <option value="Crédito">Crédito</option>
+            <option value="Dinheiro">Dinheiro</option>
+        </select>
+        <button onclick="salvarEdicaoVenda()">Salvar</button>
+        <button onclick="fecharModal()">Cancelar</button>
+    </div>
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner" id="spinner"></div>
+    <div class="success-message" id="successMessage">Sucesso!</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+    let produtos = [];
+    let vendas = [];
+    let indiceEdicao = null;
+    const LS_PRODUTOS = 'produtos_caixa';
+    const LS_VENDAS = 'vendas_caixa';
+    const LS_VENDAS_BACKUP = 'vendas_caixa_backup';
+
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const spinner = document.getElementById('spinner');
+    const successMessage = document.getElementById('successMessage');
+
+    // Função para mostrar o overlay de carregamento/sucesso
+    function showLoading(isSuccess = false) {
+        loadingOverlay.classList.add('active');
+        if (isSuccess) {
+            spinner.style.display = 'none';
+            successMessage.style.display = 'block';
+        } else {
+            spinner.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+    }
+
+    // Função para esconder o overlay
+    function hideLoading() {
+        loadingOverlay.classList.remove('active');
+    }
+
+    window.onload = () => {
+        const p = localStorage.getItem(LS_PRODUTOS);
+        const v = localStorage.getItem(LS_VENDAS);
+        if (p) produtos = JSON.parse(p);
+        if (v) vendas = JSON.parse(v);
+        atualizarListaProdutos();
+        atualizarTabelaVendas();
+    };
+
+    function salvarDados() {
+        localStorage.setItem(LS_PRODUTOS, JSON.stringify(produtos));
+        localStorage.setItem(LS_VENDAS, JSON.stringify(vendas));
+    }
+
+    function cadastrarProduto() {
+        const nomeInput = document.getElementById('produtoNome');
+        const compraInput = document.getElementById('valorCompra');
+        const vendaInput = document.getElementById('valorVenda');
+
+        const nome = nomeInput.value.trim();
+        const compra = parseFloat(compraInput.value);
+        const venda = parseFloat(vendaInput.value);
+
+        if (!nome || isNaN(compra) || isNaN(venda) || compra < 0 || venda < 0) {
+            alert('Por favor, preencha todos os campos do produto corretamente com valores não negativos.');
+            return;
+        }
+        if (venda < compra) {
+            alert('O valor de venda não pode ser menor que o valor de compra.');
+            return;
+        }
+        if (produtos.some(p => p.nome.toLowerCase() === nome.toLowerCase())) {
+            alert('Este produto já está cadastrado.');
+            return;
+        }
+
+        showLoading(); // Mostra o spinner
+        setTimeout(() => { // Simula um pequeno atraso para UX
+            produtos.push({ nome, compra, venda });
+            salvarDados();
+            atualizarListaProdutos();
+            nomeInput.value = '';
+            compraInput.value = '';
+            vendaInput.value = '';
+            hideLoading();
+            showLoading(true); // Mostra mensagem de sucesso
+            setTimeout(hideLoading, 500); // Esconde mensagem de sucesso após 1.5s
+        }, 500);
+    }
+
+    function atualizarListaProdutos() {
+        const tbody = document.querySelector('#produtosTabela tbody');
+        tbody.innerHTML = '';
+        if (produtos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum produto cadastrado.</td></tr>';
+        } else {
+            produtos.forEach((p, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.nome}</td>
+                    <td>R$ ${p.compra.toFixed(2)}</td>
+                    <td>R$ ${p.venda.toFixed(2)}</td>
+                    <td><button class="btn-small btn-danger" onclick="removerProduto(${i})">Remover</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        atualizarSelectProdutos();
+    }
+
+    function atualizarSelectProdutos() {
+        const sel = document.getElementById('selectProduto');
+        sel.innerHTML = '<option value="">-- Selecione o Produto --</option>';
+        produtos.forEach((p, i) => {
+            sel.innerHTML += `<option value="${i}">${p.nome} (R$ ${p.venda.toFixed(2)})</option>`;
+        });
+    }
+
+    function registrarVenda() {
+        const idx = document.getElementById('selectProduto').value;
+        const qtd = parseInt(document.getElementById('quantidadeVenda').value);
+        const pgto = document.getElementById('formaPagamento').value;
+
+        if (idx === '') {
+            alert('Por favor, selecione um produto.');
+            return;
+        }
+        if (isNaN(qtd) || qtd < 1) {
+            alert('A quantidade deve ser um número válido e maior que zero.');
+            return;
+        }
+        if (!pgto) {
+            alert('Por favor, selecione a forma de pagamento.');
+            return;
+        }
+
+        showLoading();
+        setTimeout(() => {
+            const produto = produtos[idx];
+            vendas.push({
+                nome: produto.nome,
+                quantidade: qtd,
+                precoVenda: produto.venda,
+                precoCompra: produto.compra,
+                formaPagamento: pgto,
+                dataHora: new Date().toLocaleString('pt-BR')
+            });
+            salvarDados();
+            atualizarTabelaVendas();
+            // Resetar os campos de venda
+            document.getElementById('selectProduto').value = '';
+            document.getElementById('quantidadeVenda').value = '1';
+            document.getElementById('formaPagamento').value = '';
+            hideLoading();
+            showLoading(true);
+            setTimeout(hideLoading, 500);
+        }, 500);
+    }
+
+    function atualizarTabelaVendas() {
+        const tbody = document.querySelector('#vendasTabela tbody');
+        tbody.innerHTML = '';
+        if (vendas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhuma venda registrada ainda.</td></tr>';
+            return;
+        }
+        vendas.forEach((v, i) => {
+            const total = v.quantidade * v.precoVenda;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${v.nome}</td>
+                <td>${v.quantidade}</td>
+                <td>R$ ${v.precoVenda.toFixed(2)}</td>
+                <td>R$ ${total.toFixed(2)}</td>
+                <td>${v.formaPagamento}</td>
+                <td>${v.dataHora}</td>
+                <td>
+                    <button class="btn-small" onclick="abrirModal(${i})">Editar</button>
+                    <button class="btn-small btn-danger" onclick="removerVenda(${i})">Remover</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function removerProduto(i) {
+        if (confirm('Tem certeza que deseja remover este produto? Esta ação não pode ser desfeita.')) {
+            showLoading();
+            setTimeout(() => {
+                produtos.splice(i, 1);
+                salvarDados();
+                atualizarListaProdutos();
+                hideLoading();
+                showLoading(true);
+                setTimeout(hideLoading, 500);
+            }, 300);
+        }
+    }
+
+    function removerVenda(i) {
+        if (confirm('Tem certeza que deseja remover esta venda?')) {
+            showLoading();
+            setTimeout(() => {
+                vendas.splice(i, 1);
+                salvarDados();
+                atualizarTabelaVendas();
+                hideLoading();
+                showLoading(true);
+                setTimeout(hideLoading, 500);
+            }, 300);
+        }
+    }
+
+    function resetarVendasDoDia() {
+        if (confirm('ATENÇÃO: Deseja limpar TODAS as vendas do dia? Um backup será salvo, mas os dados atuais serão perdidos.')) {
+            showLoading();
+            setTimeout(() => {
+                localStorage.setItem(LS_VENDAS_BACKUP, JSON.stringify(vendas));
+                vendas = [];
+                salvarDados();
+                atualizarTabelaVendas();
+                document.getElementById('recibo').style.display = 'none';
+                document.getElementById('btnGerarPDF').style.display = 'none';
+                document.getElementById('btnImprimirCupom').style.display = 'none';
+                hideLoading();
+                showLoading(true);
+                setTimeout(hideLoading, 500);
+            }, 500);
+        }
+    }
+
+    function restaurarVendas() {
+        const backup = localStorage.getItem(LS_VENDAS_BACKUP);
+        if (!backup || JSON.parse(backup).length === 0) {
+            alert('Não há backup de vendas para restaurar. Certifique-se de ter limpado as vendas anteriormente.');
+            return;
+        }
+        if (confirm('Deseja restaurar as últimas vendas salvas no backup? As vendas atuais serão sobrescritas.')) {
+            showLoading();
+            setTimeout(() => {
+                vendas = JSON.parse(backup);
+                salvarDados();
+                atualizarTabelaVendas();
+                hideLoading();
+                showLoading(true);
+                setTimeout(hideLoading, 500);
+            }, 500);
+        }
+    }
+
+    function abrirModal(i) {
+        indiceEdicao = i;
+        const v = vendas[i];
+        document.getElementById('editQuantidade').value = v.quantidade;
+        document.getElementById('editFormaPagamento').value = v.formaPagamento;
+        const editModal = document.getElementById('editModal');
+        editModal.style.display = 'flex';
+        // Adiciona classe para animar o modal
+        setTimeout(() => editModal.classList.add('active'), 10);
+    }
+
+    function fecharModal() {
+        const editModal = document.getElementById('editModal');
+        editModal.classList.remove('active');
+        setTimeout(() => {
+            indiceEdicao = null;
+            editModal.style.display = 'none';
+        }, 150); // Tempo para a animação
+    }
+
+    function salvarEdicaoVenda() {
+        const qtd = parseInt(document.getElementById('editQuantidade').value);
+        const pgto = document.getElementById('editFormaPagamento').value;
+
+        if (isNaN(qtd) || qtd < 1) {
+            alert('Quantidade inválida. Deve ser um número maior que zero.');
+            return;
+        }
+        if (!pgto) {
+            alert('Selecione a forma de pagamento.');
+            return;
+        }
+
+        showLoading();
+        setTimeout(() => {
+            vendas[indiceEdicao].quantidade = qtd;
+            vendas[indiceEdicao].formaPagamento = pgto;
+            vendas[indiceEdicao].dataHora = new Date().toLocaleString('pt-BR'); // Atualiza a data/hora da edição
+            salvarDados();
+            atualizarTabelaVendas();
+            fecharModal();
+            hideLoading();
+            showLoading(true);
+            setTimeout(hideLoading, 500);
+        }, 500);
+    }
+
+    function fecharCaixa() {
+        if (!vendas.length) {
+            alert('Não há vendas registradas para fechar o caixa.');
+            return;
+        }
+
+        showLoading();
+        setTimeout(() => {
+            let texto = '';
+            texto += `--- RECIBO DE FECHAMENTO ---\n`;
+            texto += `Data do Fechamento: ${new Date().toLocaleString('pt-BR')}\n\n`;
+
+            const agrupado = {};
+            let totalVendaGeral = 0;
+            let totalCompraGeral = 0;
+            let totalLucroGeral = 0;
+            const totalPorPgto = {};
+
+            vendas.forEach(v => {
+                const key = v.nome;
+                if (!agrupado[key]) {
+                    agrupado[key] = { quantidade: 0, precoVenda: v.precoVenda, precoCompra: v.precoCompra };
+                }
+                agrupado[key].quantidade += v.quantidade;
+
+                if (!totalPorPgto[v.formaPagamento]) totalPorPgto[v.formaPagamento] = 0;
+                totalPorPgto[v.formaPagamento] += v.quantidade * v.precoVenda;
+            });
+
+            texto += '-------------------------------------------------------------------\n';
+            texto += 'Produto           Qtd   Venda Unit.   Total Venda   Lucro\n';
+            texto += '-------------------------------------------------------------------\n';
+
+            for (const nome in agrupado) {
+                const item = agrupado[nome];
+                const totalV = item.quantidade * item.precoVenda;
+                const totalC = item.quantidade * item.precoCompra;
+                const lucro = totalV - totalC;
+
+                totalVendaGeral += totalV;
+                totalCompraGeral += totalC;
+                totalLucroGeral += lucro;
+
+                // Formatação para alinhamento no recibo
+                texto += `${nome.padEnd(18)} ${item.quantidade.toString().padEnd(4)} R$ ${item.precoVenda.toFixed(2).padEnd(10)} R$ ${totalV.toFixed(2).padEnd(12)} R$ ${lucro.toFixed(2)}\n`;
+            }
+
+            texto += '-------------------------------------------------------------------\n';
+            texto += '\nTotais por Forma de Pagamento:\n';
+            for (const pgto in totalPorPgto) {
+                texto += `${pgto.padEnd(15)}: R$ ${totalPorPgto[pgto].toFixed(2)}\n`;
+            }
+
+            texto += '\nTotais Gerais:\n';
+            texto += `Total de Venda  : R$ ${totalVendaGeral.toFixed(2)}\n`;
+            texto += `Total de Compra : R$ ${totalCompraGeral.toFixed(2)}\n`;
+            texto += `Lucro           : R$ ${totalLucroGeral.toFixed(2)}\n`;
+            texto += '-------------------------------------------------------------------\n';
+            texto += `Atendente: [Seu Nome/Nome da Loja]\n`;
+            texto += `Obrigado pela preferência!\n`;
+            texto += `-------------------------------------------------------------------\n`;
+
+
+            document.getElementById('recibo').textContent = texto;
+            document.getElementById('recibo').style.display = 'block';
+            document.getElementById('btnGerarPDF').style.display = 'inline-block';
+            document.getElementById('btnImprimirCupom').style.display = 'inline-block';
+            hideLoading();
+            showLoading(true);
+            setTimeout(hideLoading, 1500);
+        }, 800); // Atraso maior para fechamento de caixa
+    }
+
+    function gerarPDF() {
+        if (!vendas.length) {
+            alert('Não há vendas para gerar o PDF.');
+            return;
+        }
+
+        showLoading();
+        setTimeout(() => {
+            const agrupado = {};
+            let totalVendaGeral = 0;
+            let totalCompraGeral = 0;
+            let totalLucroGeral = 0;
+            const totalPorPgto = {};
+
+            vendas.forEach(v => {
+                const key = v.nome;
+                if (!agrupado[key]) {
+                    agrupado[key] = {
+                        nome: v.nome,
+                        quantidade: 0,
+                        precoVenda: v.precoVenda,
+                        precoCompra: v.precoCompra
+                    };
+                }
+                agrupado[key].quantidade += v.quantidade;
+
+                if (!totalPorPgto[v.formaPagamento]) totalPorPgto[v.formaPagamento] = 0;
+                totalPorPgto[v.formaPagamento] += v.quantidade * v.precoVenda;
+            });
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text('Recibo de Fechamento de Caixa', 14, 20);
+            doc.setFontSize(10);
+            doc.text(`Data do Fechamento: ${new Date().toLocaleString('pt-BR')}`, 14, 27);
+
+
+            const rows = [];
+            Object.values(agrupado).forEach(v => {
+                const totalV = v.quantidade * v.precoVenda;
+                const totalC = v.quantidade * v.precoCompra;
+                const lucro = totalV - totalC;
+                totalVendaGeral += totalV;
+                totalCompraGeral += totalC;
+                totalLucroGeral += lucro;
+                rows.push([
+                    v.nome,
+                    v.quantidade.toString(),
+                    'R$ ' + v.precoVenda.toFixed(2),
+                    'R$ ' + totalV.toFixed(2),
+                    'R$ ' + lucro.toFixed(2)
+                ]);
+            });
+
+            doc.autoTable({
+                head: [['Produto', 'Qtd', 'Venda Unit.', 'Total Venda', 'Lucro']],
+                body: rows,
+                startY: 40,
+                theme: 'striped',
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 3
+                },
+                headStyles: {
+                    fillColor: [0, 123, 255], /* Cor do cabeçalho da tabela */
+                    textColor: 255,
+                    fontStyle: 'bold'
+                }
+            });
+
+            let y = doc.lastAutoTable.finalY + 15;
+
+            doc.setFontSize(14);
+            doc.text('Totais por Forma de Pagamento:', 14, y);
+            y += 8;
+            doc.setFontSize(12);
+            for (const pgto in totalPorPgto) {
+                doc.text(`${pgto}: R$ ${totalPorPgto[pgto].toFixed(2)}`, 14, y);
+                y += 7;
+            }
+
+            y += 10;
+            doc.setFontSize(14);
+            doc.text(`Total de Venda : R$ ${totalVendaGeral.toFixed(2)}`, 14, y);
+            y += 8;
+            doc.text(`Total de Compra: R$ ${totalCompraGeral.toFixed(2)}`, 14, y);
+            y += 8;
+            doc.text(`Lucro          : R$ ${totalLucroGeral.toFixed(2)}`, 14, y);
+
+            doc.save('recibo_fechamento_caixa.pdf');
+            hideLoading();
+            showLoading(true);
+            setTimeout(hideLoading, 1000);
+        }, 1000); // Atraso maior para geração de PDF
+    }
+
+    function imprimirCupomFiscal() {
+        if (!vendas.length) {
+            alert('Não há vendas para imprimir cupom.');
+            return;
+        }
+
+        showLoading();
+        setTimeout(() => {
+            const agrupado = {};
+            let totalVendaGeral = 0;
+            let totalCompraGeral = 0; // Necessário para calcular o lucro
+            const totalPorPgto = {};
+
+            vendas.forEach(v => {
+                if (!agrupado[v.nome]) {
+                    agrupado[v.nome] = { quantidade: 0, precoVenda: v.precoVenda, precoCompra: v.precoCompra };
+                }
+                agrupado[v.nome].quantidade += v.quantidade;
+
+                if (!totalPorPgto[v.formaPagamento]) totalPorPgto[v.formaPagamento] = 0;
+                totalPorPgto[v.formaPagamento] += v.quantidade * v.precoVenda;
+            });
+
+            let texto = '';
+            texto += '**** CUPOM FISCAL ****\n';
+            texto += `Data: ${new Date().toLocaleString('pt-BR')}\n\n`;
+            texto += '--------------------------------\n';
+            texto += 'PRODUTO            QTD  TOTAL\n';
+            texto += '--------------------------------\n';
+
+            for (const nome in agrupado) {
+                const item = agrupado[nome];
+                const totalV = item.quantidade * item.precoVenda;
+                const totalC = item.quantidade * item.precoCompra; // Coleta o total de compra para o lucro
+                totalVendaGeral += totalV;
+                totalCompraGeral += totalC;
+
+                texto += `${nome.substring(0, 15).padEnd(15)} ${item.quantidade.toString().padEnd(3)} R$ ${totalV.toFixed(2)}\n`;
+            }
+
+            texto += '--------------------------------\n';
+            texto += `TOTAL GERAL      : R$ ${totalVendaGeral.toFixed(2)}\n`;
+            texto += '--------------------------------\n';
+
+            if (Object.keys(totalPorPgto).length > 0) {
+                texto += 'PAGAMENTO:\n';
+                for (const pgto in totalPorPgto) {
+                    texto += `${pgto.padEnd(15)}: R$ ${totalPorPgto[pgto].toFixed(2)}\n`;
+                }
+                texto += '--------------------------------\n';
+            }
+
+            texto += `LUCRO ESTIMADO   : R$ ${(totalVendaGeral - totalCompraGeral).toFixed(2)}\n`;
+            texto += '--------------------------------\n';
+            texto += '      FECHAMENTO DO DIA!\n';
+            texto += '********************************\n';
+
+            const janela = window.open('', 'CupomFiscal', 'width=300,height=auto,scrollbars=yes,resizable=yes'); // Largura ajustada para cupom
+            janela.document.write(`
+                <html>
+                    <head>
+                        <title>Cupom Fiscal</title>
+                        <style>
+                            body {
+                                font-family: 'Courier New', monospace;
+                                font-size: 11px;
+                                margin: 10px;
+                                white-space: pre-wrap;
+                                background: white;
+                                color: black;
+                                line-height: 1.3;
+                            }
+                            @media print {
+                                body { font-size: 10px; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <pre>${texto}</pre>
+                    </body>
+                </html>`);
+            janela.document.close();
+            janela.focus();
+            janela.print();
+            janela.onafterprint = () => janela.close(); // Fecha a janela após a impressão
+            hideLoading();
+            showLoading(true);
+            setTimeout(hideLoading, 1500);
+        }, 1000); // Atraso maior para impressão
+    }
+</script>
+
+</body>
+</html>
